@@ -217,11 +217,18 @@ func streamUpstream(w http.ResponseWriter, modelID string, messages []Message, t
         defer resp.Body.Close()
 
         flusher, _ := w.(http.Flusher)
-        scanner := bufio.NewScanner(resp.Body)
+        reader := bufio.NewReader(resp.Body)
         accum := make(map[int]*AccumToolCall)
 
-        for scanner.Scan() {
-                line := scanner.Text()
+        for {
+                raw, err := reader.ReadString('\n')
+                if err != nil {
+                        break
+                }
+                line := strings.TrimRight(raw, "\r\n")
+                if line == "" {
+                        continue
+                }
                 if !strings.HasPrefix(line, "data: ") || line == "data: [DONE]" {
                         fmt.Fprint(w, line+"\n\n")
                         if flusher != nil {
