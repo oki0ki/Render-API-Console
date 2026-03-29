@@ -217,6 +217,15 @@ func streamUpstream(w http.ResponseWriter, modelID string, messages []Message, t
         defer resp.Body.Close()
 
         flusher, _ := w.(http.Flusher)
+
+        if len(tools) == 0 {
+                io.Copy(w, resp.Body)
+                if flusher != nil {
+                        flusher.Flush()
+                }
+                return
+        }
+
         reader := bufio.NewReader(resp.Body)
         accum := make(map[int]*AccumToolCall)
 
