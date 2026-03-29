@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ai-gateway
+    runtime: go
+    rootDir: console
+    buildCommand: go build -o gateway .
+    startCommand: ./gateway
+    plan: free
+    healthCheckPath: /
+
+  - type: web
+    name: ai-console
+    runtime: node
+    rootDir: console/console
+    buildCommand: npm install && npm run build
+    startCommand: node build
+    plan: free
+    healthCheckPath: /
