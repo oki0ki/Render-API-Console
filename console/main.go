@@ -8,6 +8,8 @@ import (
         "io"
         "log"
         "net/http"
+        "net/http/httputil"
+        "net/url"
         "os"
         "sort"
         "strings"
@@ -515,14 +517,19 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-        port := os.Getenv("API_PORT")
+        port := os.Getenv("PORT")
         if port == "" {
-                port = "3001"
+                port = "10000"
         }
+
+        svelteTarget, _ := url.Parse("http://localhost:3000")
+        svelteProxy := httputil.NewSingleHostReverseProxy(svelteTarget)
+
         mux := http.NewServeMux()
-        mux.HandleFunc("/", handleRoot)
         mux.HandleFunc("/v1/chat/completions", handleChat)
         mux.HandleFunc("/v1/models", handleModels)
+        mux.HandleFunc("/v1/config", handleRoot)
+        mux.Handle("/", svelteProxy)
 
         go func() {
                 for {
