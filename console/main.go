@@ -8,8 +8,6 @@ import (
         "io"
         "log"
         "net/http"
-        "net/http/httputil"
-        "net/url"
         "os"
         "sort"
         "strings"
@@ -522,19 +520,10 @@ func main() {
                 port = "10000"
         }
 
-        svelteTarget, _ := url.Parse("http://localhost:3000")
-        svelteProxy := httputil.NewSingleHostReverseProxy(svelteTarget)
-
         mux := http.NewServeMux()
         mux.HandleFunc("/v1/chat/completions", handleChat)
         mux.HandleFunc("/v1/models", handleModels)
         mux.HandleFunc("/v1/config", handleRoot)
-        mux.HandleFunc("/v1/", func(w http.ResponseWriter, r *http.Request) {
-                w.Header().Set("Content-Type", "application/json")
-                w.WriteHeader(http.StatusNotFound)
-                w.Write([]byte(`{"error":"endpoint not found"}`))
-        })
-        mux.Handle("/", svelteProxy)
 
         go func() {
                 for {
