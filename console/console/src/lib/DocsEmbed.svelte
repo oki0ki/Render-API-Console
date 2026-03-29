@@ -69,12 +69,17 @@
                 }
         }
 
-        onMount(() => {
+        onMount(async () => {
                 const host = window.location.hostname;
-                if (host === 'localhost' || host === '127.0.0.1') {
-                        baseUrl.set('http://localhost:3001/v1');
-                } else {
-                        baseUrl.set('https://ai-gateway-lrv4.onrender.com/v1');
+                const configUrl = (host === 'localhost' || host === '127.0.0.1')
+                        ? 'http://localhost:3001/v1/config'
+                        : 'https://ai-gateway-lrv4.onrender.com/v1/config';
+                try {
+                        const res = await fetch(configUrl);
+                        const data = await res.json();
+                        if (data.base_url) baseUrl.set(data.base_url);
+                } catch {
+                        baseUrl.set(configUrl.replace('/config', ''));
                 }
         });
 </script>
