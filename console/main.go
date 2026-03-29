@@ -488,18 +488,7 @@ func handleModels(w http.ResponseWriter, r *http.Request) {
 }
 
 func detectBaseURL(r *http.Request) string {
-        host := r.Header.Get("X-Forwarded-Host")
-        if host == "" {
-                host = r.Host
-        }
-        // strip port
-        if h, _, found := strings.Cut(host, ":"); found {
-                host = h
-        }
-        if !strings.HasPrefix(host, "api.") {
-                host = "api." + host
-        }
-        return "https://" + host + "/v1"
+        return "https://ai-gateway-lrv4.onrender.com/v1"
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
