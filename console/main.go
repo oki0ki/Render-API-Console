@@ -529,6 +529,11 @@ func main() {
         mux.HandleFunc("/v1/chat/completions", handleChat)
         mux.HandleFunc("/v1/models", handleModels)
         mux.HandleFunc("/v1/config", handleRoot)
+        mux.HandleFunc("/v1/", func(w http.ResponseWriter, r *http.Request) {
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusNotFound)
+                w.Write([]byte(`{"error":"endpoint not found"}`))
+        })
         mux.Handle("/", svelteProxy)
 
         go func() {
