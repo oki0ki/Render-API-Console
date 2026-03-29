@@ -1,7 +1,7 @@
 FROM node:20-alpine AS svelte-build
 WORKDIR /app
 COPY console/console/package*.json ./
-RUN npm ci
+RUN npm install
 COPY console/console/ ./
 RUN npm run build
 
